@@ -26,6 +26,9 @@ export const WhiskeyRecommendations = ({ recommendations }: WhiskeyRecommendatio
               <p className="text-sm text-whiskey-caramel">
                 ${rec.price}
               </p>
+              <div className="flex flex-col gap-1 mt-2 text-xs text-whiskey-charcoal dark:text-whiskey-cream">
+                <p>Community: {rec.wishlists.toLocaleString()} wishlists, {rec.votes.toLocaleString()} votes, in {rec.collections.toLocaleString()} collections</p>
+              </div>
             </div>
           </div>
           <p className="text-sm text-whiskey-charcoal dark:text-whiskey-cream italic">

@@ -6,6 +6,9 @@ export interface WhiskeyRecommendation {
   proof: number;
   price: string | number;
   why: string;
+  wishlists: number;
+  votes: number;
+  collections: number;
 }
 
 export interface RecommendationResponse {
@@ -46,7 +49,10 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
         spirit: 'Unknown', // Default spirit type
         proof: 0, // Default proof
         image_url: '/placeholder-whiskey.png', // Default image
-        why: '' // Default reasoning
+        why: '', // Default reasoning
+        wishlists: 0,
+        votes: 0,
+        collections: 0
       };
     }
     // Handle numbered items without price (e.g., "3. **E.H. Taylor**")
@@ -62,7 +68,10 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
         spirit: 'Unknown', // Default spirit type
         proof: 0, // Default proof
         image_url: '/placeholder-whiskey.png', // Default image
-        why: '' // Default reasoning
+        why: '', // Default reasoning
+        wishlists: 0,
+        votes: 0,
+        collections: 0
       };
     }
     // Handle proof (e.g., "Proof: 93")
@@ -86,6 +95,15 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
       // Only accept valid URLs
       if (imageUrl && imageUrl.startsWith('http') && !imageUrl.includes('undefined')) {
         currentRec.image_url = imageUrl;
+      }
+    }
+    // Handle community stats (e.g., "Community: 8,983 wishlists, 29,697 votes, in 53,771 collections")
+    else if (trimmedLine.startsWith('Community:')) {
+      const statsMatch = trimmedLine.match(/Community:\s*(\d+(?:,\d+)*)\s*wishlists,\s*(\d+(?:,\d+)*)\s*votes,\s*in\s*(\d+(?:,\d+)*)\s*collections/);
+      if (statsMatch) {
+        currentRec.wishlists = parseInt(statsMatch[1].replace(/,/g, ''));
+        currentRec.votes = parseInt(statsMatch[2].replace(/,/g, ''));
+        currentRec.collections = parseInt(statsMatch[3].replace(/,/g, ''));
       }
     }
     // Handle why section (e.g., "Why: matches your preference...")
@@ -113,6 +131,9 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
     price: rec.price === -1 ? "UNKNOWN" : rec.price,
     spirit: rec.spirit || 'Unknown',
     proof: (!rec.proof || rec.proof < 0 || rec.proof > 200) ? 0 : rec.proof,
-    why: rec.why || 'No additional information available'
+    why: rec.why || 'No additional information available',
+    wishlists: rec.wishlists || 0,
+    votes: rec.votes || 0,
+    collections: rec.collections || 0
   }));
 }; 
