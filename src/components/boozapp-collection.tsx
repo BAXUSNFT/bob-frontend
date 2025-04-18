@@ -106,7 +106,7 @@ const CollectionDisplay = ({
     <div className="p-4 bg-bonk-orange/10 rounded-lg border border-bonk-orange/20">
       <h2 className="text-lg font-semibold text-bonk-orange mb-2">Welcome to Drunk BOB! 🥃</h2>
       <p className="text-sm text-bonk-gray-light dark:text-bonk-white/80">
-        BOB works best if you have a public Boozapp profile. Enter your username here or just tell BOB what it is in conversation to see relevant recommendations.
+        BOB works best if you have a public Boozapp profile. Enter your username here to see your collection and mention your username in conversation to see relevant recommendations.
       </p>
     </div>
 
