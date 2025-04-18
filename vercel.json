@@ -3,24 +3,18 @@
   "buildCommand": "pnpm install && pnpm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "functions": {
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/([^/]+)/message",
-      "dest": "/api/message.js",
-      "methods": ["POST", "OPTIONS"]
+      "source": "/",
+      "destination": "/index.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/chat/:agentId",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/chat/:agentId/:roomId",
+      "destination": "/index.html"
     }
-  ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
