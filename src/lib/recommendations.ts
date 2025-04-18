@@ -45,7 +45,7 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
         brand: nameAndPriceMatch[1].split(' ')[0].trim(), // Use first word as brand
         spirit: 'Unknown', // Default spirit type
         proof: 0, // Default proof
-        image_url: '/images/placeholder-whiskey.png', // Default image
+        image_url: '/placeholder-whiskey.png', // Default image
         why: '' // Default reasoning
       };
     }
@@ -61,7 +61,7 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
         brand: nameMatch![1].split(' ')[0].trim(), // Use first word as brand
         spirit: 'Unknown', // Default spirit type
         proof: 0, // Default proof
-        image_url: '/images/placeholder-whiskey.png', // Default image
+        image_url: '/placeholder-whiskey.png', // Default image
         why: '' // Default reasoning
       };
     }
@@ -108,7 +108,7 @@ export const parseRecommendationsFromText = (text: string): WhiskeyRecommendatio
   return recommendations.map(rec => ({
     ...rec,
     image_url: (!rec.image_url || !rec.image_url.startsWith('http') || rec.image_url.includes('undefined')) 
-      ? '/images/placeholder-whiskey.png' 
+      ? '/placeholder-whiskey.png' 
       : rec.image_url,
     price: rec.price === -1 ? "UNKNOWN" : rec.price,
     spirit: rec.spirit || 'Unknown',
