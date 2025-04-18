@@ -16,7 +16,7 @@ export interface RecommendationResponse {
 export const formatRecommendations = (recommendations: WhiskeyRecommendation[]): RecommendationResponse => {
   return {
     message: "Based on your collection and preferences, here are my top 3 recommendations:",
-    recommendations: recommendations.map((rec, index) => ({
+    recommendations: recommendations.map((rec) => ({
       ...rec,
       image_url: rec.image_url || `/placeholder-whiskey.png`
     }))

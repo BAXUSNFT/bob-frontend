@@ -28,9 +28,9 @@ import Markdown from "react-markdown"
 import 'github-markdown-css'
 import { useNavigate, useParams } from "react-router-dom";
 import PromptSidebar from "./prompt-sidebar";
-import { Dialog, DialogHeader, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 import { WhiskeyRecommendations } from "./whiskey-recommendations";
-import { WhiskeyRecommendation, parseRecommendationsFromText } from "@/lib/recommendations";
+import { parseRecommendationsFromText } from "@/lib/recommendations";
 
 interface ExtraContentFields {
     user: string;
