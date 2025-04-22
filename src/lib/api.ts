@@ -139,7 +139,11 @@ export const apiClient = {
     getBoozappCollection: async (username: string): Promise<BoozappItem[]> => {
         try {
             const apiUrl = `https://services.baxus.co/api/bar/user/${username}`;
-            return await fetcher({ url: apiUrl });
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
         } catch (error) {
             console.error("Error fetching Boozapp collection:", error);
             throw error;
