@@ -1,5 +1,6 @@
 import { type UUID, type Character } from "@elizaos/core";
 
+
 const BASE_URL = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
 
 const fetcher = async ({
@@ -57,6 +58,68 @@ const fetcher = async ({
         throw new Error(errorMessage);
     });
 };
+
+// Proxy options to try in order
+const CORS_PROXIES = [
+  (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`, // AllOrigins
+  (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`, // ThingProxy
+  (url: string) => `https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(url)}`, // CORS Proxy
+  (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`, // CORS Proxy IO
+];
+
+// Track which proxy was last successful
+let lastSuccessfulProxyIndex = 0;
+
+// Generic fetch with proxy function
+async function fetchWithProxy<T>(url: string, options?: RequestInit): Promise<T> {
+  const tryProxy = async (proxyIndex: number): Promise<T> => {
+    if (proxyIndex >= CORS_PROXIES.length) {
+      throw new Error("All proxy attempts failed");
+    }
+
+    const proxyUrl = CORS_PROXIES[proxyIndex](url);
+    console.log(`Trying proxy #${proxyIndex + 1}: ${proxyUrl}`);
+    
+    try {
+      const response = await fetch(proxyUrl, {
+        method: options?.method || 'GET',
+        headers: {
+          'Accept': 'application/json',
+          ...(options?.headers || {})
+        },
+        ...options
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Proxy ${proxyIndex + 1} failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const rawData = await response.json();
+      
+      // Different proxies return data in different formats
+      let data: T;
+      
+      if (proxyIndex === 0) { // AllOrigins format
+        data = JSON.parse(rawData.contents);
+      } else if (proxyIndex === 2) { // CORS Proxy format
+        data = JSON.parse(rawData.body);
+      } else {
+        data = rawData; // Standard format
+      }
+      
+      console.log(`Proxy #${proxyIndex + 1} succeeded`);
+      lastSuccessfulProxyIndex = proxyIndex; // Remember successful proxy
+      return data;
+    } catch (error) {
+      console.error(`Proxy #${proxyIndex + 1} failed:`, error);
+      // Try next proxy
+      return tryProxy(proxyIndex + 1);
+    }
+  };
+  
+  // Start with the last successful proxy
+  return tryProxy(lastSuccessfulProxyIndex);
+}
 
 // Import the BoozappItem type
 export interface BoozappItem {
@@ -139,11 +202,7 @@ export const apiClient = {
     getBoozappCollection: async (username: string): Promise<BoozappItem[]> => {
         try {
             const apiUrl = `https://services.baxus.co/api/bar/user/${username}`;
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
+            return await fetchWithProxy<BoozappItem[]>(apiUrl);
         } catch (error) {
             console.error("Error fetching Boozapp collection:", error);
             throw error;
