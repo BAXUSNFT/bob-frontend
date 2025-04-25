@@ -236,7 +236,28 @@ export default function Page({ agentId }: { agentId: UUID }) {
                     // Remove loading messages
                     const filteredOld = old.filter(msg => !msg.isLoading);
                     
-                    // Deduplicate messages based on content
+                    // Check if this is a whiskey recommendation query
+                    const isWhiskeyRecommendation = 
+                        newMessages.some(msg => 
+                            msg.text.toLowerCase().includes("whiskey") && 
+                            (msg.text.toLowerCase().includes("recommend") || 
+                             msg.text.toLowerCase().includes("under $")));
+                    
+                    if (isWhiskeyRecommendation && newMessages.length > 1) {
+                        // For whiskey recommendations, keep only one message
+                        // Prefer the structured format (with "Proof:" and "Community:")
+                        const structuredMsg = newMessages.find(
+                            msg => msg.text.includes("Proof:") && msg.text.includes("Community:")
+                        );
+                        
+                        // If we found a structured message, use only that
+                        if (structuredMsg) {
+                            console.log("Using only structured recommendation");
+                            return [...filteredOld, structuredMsg];
+                        }
+                    }
+                    
+                    // For normal messages, deduplicate as before
                     const uniqueMessages = newMessages.reduce((acc: ContentWithUser[], curr) => {
                         // Only add message if it's not already in the accumulator with the same text
                         if (!acc.some(msg => msg.text === curr.text && msg.user === curr.user)) {
@@ -475,8 +496,7 @@ export default function Page({ agentId }: { agentId: UUID }) {
                                             >
                                                 {message?.user !== "user" ? (
                                                     <div className='markdown-body'>
-                                                        {message.text.includes("Based on your collection and preferences, here are my top 3 recommendations:") || 
-                                                        message.text.includes("Here are my top recommendations under $") ? (
+                                                        {message.text.includes("Proof:") && message.text.includes("Community:") ? (
                                                             <WhiskeyRecommendations
                                                                 recommendations={parseRecommendationsFromText(message.text)}
                                                             />
