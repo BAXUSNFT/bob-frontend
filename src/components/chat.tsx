@@ -342,37 +342,16 @@ export default function Page({ agentId }: { agentId: UUID }) {
 
     const suggestedPrompts = [
         {
-            "prompt": "What is BONK?",
-            "description": "Learn more about BONK and its ecosystem",
+            "prompt": "Give recommendations for user tradefortendies?",
+            "description": "Get personalized trading recommendations",
         },
         {
-            "prompt": "I am new to BONK. Where do I start?",
-            "description": "Get started in the BONK ecosystem",
+            "prompt": "Give me whiskey recommendations under $50?",
+            "description": "Find affordable whiskey recommendations",
         },
         {
-            "prompt": "What are all the BONK products?",
-            "description": "Explore the various products in the BONK ecosystem",
-        },
-        {
-            "prompt": "How can I earn more BONK?",
-            "description": "Discover ways to earn more BONK",
-        },
-        {
-            "prompt": "Generate me a random image of BONK",
-            "description": "Need some memes or images to show your support for BONK? Get a random image of BONK",
-        },
-        {
-            "prompt": "Show me BONK whale trades",
-            "description": "Want to know what the whales are doing? Get the latest whale trades",
-        },
-        {
-            "prompt": "1d BONK chart",
-            "header": "Daily BONK Price Chart Analytics",
-            "description": "Generate key insights and potential price movements with Fridon AI! View and download your generated charts",
-        },
-        {
-            "prompt": "Give me a BONK trading signal",
-            "description": "Get a trading signal for BONK",
+            "prompt": "Tell me your favorite drunk story?",
+            "description": "Hear some entertaining stories",
         },
     ]
 
@@ -579,6 +558,20 @@ export default function Page({ agentId }: { agentId: UUID }) {
                     </ChatMessageList>
                 </div>
                 <div className="sticky w-full bottom-0 py-4 bg-bonk-white dark:bg-bonk-gray-light">
+                    {/* Suggested Prompts Section */}
+                    <div className="mb-4 flex flex-wrap gap-2 justify-center">
+                        {suggestedPrompts.map((prompt, index) => (
+                            <Button
+                                key={index}
+                                variant="outline"
+                                className="text-sm border-bonk-orange text-bonk-orange hover:bg-bonk-orange/10"
+                                onClick={(e) => handleSuggestedPromptClick(e, prompt.prompt)}
+                            >
+                                {prompt.prompt}
+                            </Button>
+                        ))}
+                    </div>
+                    
                     <form
                         ref={formRef}
                         onSubmit={handleSendMessage}
