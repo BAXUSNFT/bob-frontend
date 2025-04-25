@@ -475,7 +475,8 @@ export default function Page({ agentId }: { agentId: UUID }) {
                                             >
                                                 {message?.user !== "user" ? (
                                                     <div className='markdown-body'>
-                                                        {message.text.includes("Based on your collection and preferences, here are my top 3 recommendations:") ? (
+                                                        {message.text.includes("Based on your collection and preferences, here are my top 3 recommendations:") || 
+                                                        message.text.includes("Here are my top recommendations under $") ? (
                                                             <WhiskeyRecommendations
                                                                 recommendations={parseRecommendationsFromText(message.text)}
                                                             />
