@@ -15,6 +15,14 @@
     {
       "source": "/chat/:agentId/:roomId",
       "destination": "/index.html"
+    },
+    { 
+      "source": "/api/:path*", 
+      "destination": "http://ec2-54-90-78-156.compute-1.amazonaws.com/:path*" 
+    },
+    {
+      "source": "/ws", 
+      "destination": "ws://ec2-54-90-78-156.compute-1.amazonaws.com/ws" 
     }
   ]
 }
