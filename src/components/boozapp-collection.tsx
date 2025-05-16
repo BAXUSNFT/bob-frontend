@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Search } from "lucide-react";
 import { apiClient, BoozappItem } from "@/lib/api";
 
-const DEFAULT_USERNAME = "carriebaxus";
+const DEFAULT_USERNAME = "tradefortendies";
 
 // Keep the mock data as fallback
 const MOCK_DATA: BoozappItem[] = [
@@ -129,7 +129,7 @@ const CollectionDisplay = ({
     {isLoading && <div className="text-center">Loading...</div>}
     {error && !isLoading && (
       <div className="text-center text-yellow-600 dark:text-yellow-400 text-sm">
-        Using preview data. {username !== DEFAULT_USERNAME && "Try 'carriebaxus' for a working example."}
+        Using preview data. {username !== DEFAULT_USERNAME && "Try 'tradefortendies' for a working example."}
       </div>
     )}
     
