@@ -1,0 +1,82 @@
+name: Duplocloud CI
+permissions:
+  id-token: write
+  contents: read
+on:
+  push:
+    branches:
+      - master
+env:
+  duplo_host: https://baxus.duplocloud.net
+  duplo_token: '${{ secrets.DUPLO_TOKEN }}'
+
+jobs:
+  GAR_Docker_Image_Push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: 'actions/checkout@v3'
+        with:
+          fetch-depth: 0
+
+      - name: Set envs for production
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo "workload_identity_provider=projects/258200023794/locations/global/workloadIdentityPools/github/providers/github" >> $GITHUB_ENV
+          echo "service_account=github@duplocloud-production.iam.gserviceaccount.com" >> $GITHUB_ENV
+          echo "registry_tag=us-east4-docker.pkg.dev/duplocloud-production/baxus/bob-frontend:${{ github.sha }}, us-east4-docker.pkg.dev/duplocloud-production/baxus/bob-frontend:master" >> $GITHUB_ENV
+          echo "registry_tag_only_sha=us-east4-docker.pkg.dev/duplocloud-production/baxus/bob-frontend:${{ github.sha }}" >> $GITHUB_ENV
+      - name: Setup Node.js
+        uses: 'actions/setup-node@v4'
+        with:
+          node-version: 23.x
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - id: auth
+        uses: google-github-actions/auth@v0
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: ${{env.workload_identity_provider}}
+          service_account: ${{env.service_account}}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to GAR
+        uses: docker/login-action@v3
+        with:
+          registry: us-east4-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+      - id: docker-push-tagged
+        name: Tag Docker image and push to Google Artifact Registry
+        uses: docker/build-push-action@v3
+        with:
+          context: '.'
+          push: true
+          tags: |
+            ${{env.registry_tag}}
+    outputs:
+      image: '${{ env.registry_tag_only_sha }}'
+  Deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - GAR_Docker_Image_Push
+    steps:
+      - name: Set envs for master
+        if: github.ref == 'refs/heads/master'
+        run: |
+          echo "TENANT_NAME=prod01" >> $GITHUB_ENV
+      - name: Deploy services
+        uses: duplocloud/ghactions-service-update@master
+        with:
+          tenant: '${{ env.TENANT_NAME }}'
+          services: |-
+            [
+              { "Name": "bob-frontend", "Image": "${{ needs.GAR_Docker_Image_Push.outputs.image }}" }
+            ]

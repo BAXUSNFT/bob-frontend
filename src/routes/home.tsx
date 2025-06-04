@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router";
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
                     src="/logo.png"
                     className="object-contain p-2"
                 />
-                <p>BOB is always tipsy but never drunk.. but we all know the truth. Nevertheless, BOB is here to help you get tipsy.</p>
+                <p>BOB is always tipsy but never drunk.. but we all know the truth. Nevertheless, BOB is here to help you.</p>
                 {agents && agents[0]?.id && (
                     <NavLink
                         to={`/chat/${agents[0].id}`}
@@ -29,7 +29,7 @@ export default function Home() {
                             variant="outline"
                             className="w-full bg-bonk-orange border-0 text-bonk-white py-8"
                         >
-                            Say hi to Drunk BOB
+                            Say hi to BOB
                         </Button>
                     </NavLink>
                 )}

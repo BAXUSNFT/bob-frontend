@@ -6,8 +6,8 @@
     "scripts": {
         "extract-version": "./version.sh",
         "dev": "vite",
-        "dev:og": "pnpm run extract-version && vite",
-        "build": "pnpm run extract-version && tsc -b && vite build",
+        "dev:og": "npm run extract-version && vite",
+        "build": "tsc -b && vite build",
         "preview": "vite preview",
         "lint": "eslint ."
     },
