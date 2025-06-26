@@ -1,6 +1,7 @@
 import { type Character, type UUID } from "@elizaos/core";
 
-const BASE_URL = "https://bob-prod01.baxusprod.xyz";
+// Priority order: Environment variable -> Internal cluster -> External fallback
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://bob:8080";
 
 const fetcher = async ({
   url,
