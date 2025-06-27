@@ -1,6 +1,6 @@
 import { type Character, type UUID } from "@elizaos/core";
 
-const BASE_URL = "https://bob-prod01.baxusprod.xyz";
+const BASE_URL = "https://bob.baxusprod.xyz";
 
 const fetcher = async ({
   url,
